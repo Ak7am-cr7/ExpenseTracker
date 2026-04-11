@@ -11,7 +11,16 @@ const generateToken = (id) => {
 // 1. Register User
 const registerUser = async (req, res) => {
     try {
-        const { fullName, email, password, profileImageUrl } = req.body;
+        const { fullName, email, password } = req.body;
+        
+        // FIX: Check if a file was uploaded, otherwise use the body or empty string
+        let profileImageUrl = "";
+        if (req.file) {
+            profileImageUrl = `https://expensetracker-3r4e.onrender.com/uploads/${req.file.filename}`;
+        } else if (req.body.profileImageUrl) {
+            profileImageUrl = req.body.profileImageUrl;
+        }
+
         const existingUser = await User.findOne({ email });
         if (existingUser) return res.status(400).json({ message: "User exists" });
 
@@ -19,7 +28,7 @@ const registerUser = async (req, res) => {
             fullName,
             email,
             password,
-            profileImageUrl: profileImageUrl || ""
+            profileImageUrl
         });
 
         res.status(201).json({
@@ -97,9 +106,20 @@ const deleteProfileImage = async (req, res) => {
 // 5. Update User Profile
 const updateUserProfile = async (req, res) => {
     try {
-        const { profileImageUrl } = req.body;
+        let profileImageUrl = req.body.profileImageUrl;
+
+        // FIX: If a new file is uploaded via Multer, create a secure HTTPS link
+        if (req.file) {
+            profileImageUrl = `https://expensetracker-3r4e.onrender.com/uploads/${req.file.filename}`;
+        }
+
         const userId = req.user.id || req.user._id;
-        const user = await User.findByIdAndUpdate(userId, { profileImageUrl }, { new: true }).select("-password");
+        const user = await User.findByIdAndUpdate(
+            userId, 
+            { profileImageUrl }, 
+            { new: true }
+        ).select("-password");
+        
         res.status(200).json({ user });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -107,12 +127,9 @@ const updateUserProfile = async (req, res) => {
 };
 
 // 6. Update User Budget
-// FIXED: Removed 'export' keyword and used standard function declaration
 const updateBudget = async (req, res) => {
   try {
     const { monthlyLimit } = req.body; 
-
-    // Safety check for user ID
     const userId = req.user ? (req.user.id || req.user._id) : null; 
 
     if (!userId) {
@@ -135,8 +152,6 @@ const updateBudget = async (req, res) => {
   }
 };
 
-// EXPORT ALL FUNCTIONS
-// FIXED: Added updateBudget to the exports list
 module.exports = {
     registerUser,
     loginUser,
