@@ -8,5 +8,8 @@ export default defineConfig({
   server: {
     host: true,        // ✅ expose to network
     port: 5173,        // optional but recommended
+  },
+  build: {
+    chunkSizeWarningLimit: 1600, // ✅ Increases limit to hide the warning
   }
 })
