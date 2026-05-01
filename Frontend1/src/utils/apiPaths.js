@@ -1,4 +1,4 @@
-export const BASE_URL = "https://expensetracker-3r4e.onrender.com";
+export const BASE_URL = "https://expensetracker-3r4e.onrender.com/api/v1/auth/login";
 
 // utils/apiPaths.js
 export const API_PATHS = {
@@ -23,7 +23,7 @@ export const API_PATHS = {
         DOWNLOAD_EXPENSE: `/api/v1/expense/downloadexcel`,
     },
     IMAGE: {
-        UPLOAD_IMAGE: "api/v1/auth/upload-image",
-        UPDATE_PROFILE: "api/v1/auth/update-profile",
+        UPLOAD_IMAGE: "/api/v1/auth/upload-image",
+        UPDATE_PROFILE: "/api/v1/auth/update-profile",
     },
 };
